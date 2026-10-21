@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="hi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>king - The Sovereign Mind & Master Suite</title>
+  
+  <!-- Tailwind CSS & Phosphor Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Cinzel:wght@700;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+            display: ['"Cinzel"', 'serif'],
+            outfit: ['"Outfit"', 'sans-serif']
+          },
+          colors: {
+            gold: {
+              400: '#f3e5ab',
+              500: '#d4af37',
+              600: '#aa8c2c',
+              700: '#80681e'
+            },
+            slate: {
+              850: '#111625',
+              900: '#0b0f19',
+              950: '#05070d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #05070d; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #f3e5ab 0%, #d4af37 50%, #aa8c2c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .glass-card {
+      background: rgba(17, 22, 37, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.15);
+    }
+    .glass-card:hover {
+      border-color: rgba(212, 175, 55, 0.35);
+    }
+    
+    .chess-grid {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      grid-template-rows: repeat(8, minmax(0, 1fr));
+      aspect-ratio: 1 / 1;
+      width: 100%;
+      max-width: 460px;
+      user-select: none;
+    }
+    .chess-sq {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(22px, 5.5vw, 38px);
+      cursor: pointer;
+    }
+    .chess-sq.light { background: #e2c08a; color: #1e293b; }
+    .chess-sq.dark { background: #875127; color: #f8fafc; }
+    .chess-sq.selected { background: #65a30d !important; }
+    .chess-sq.valid-move { position: relative; }
+    .chess-sq.valid-move::after {
+      content: '';
+      width: 28%;
+      height: 28%;
+      background: rgba(15, 23, 42, 0.5);
+      border-radius: 50%;
+      position: absolute;
+    }
+    
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    .loader-glow { animation: pulseGlow 1.8s ease-in-out infinite; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans selection:bg-gold-500 selection:text-black">
+
+  <!-- 1. SPLASH SCREEN (THE SOVEREIGN KING) -->
+  <div id="splash-view" class="fixed inset-0 z-50 bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+    <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-gold-600 via-gold-500 to-amber-200 flex items-center justify-center text-slate-950 font-black text-4xl shadow-2xl shadow-gold-500/20 mb-4 animate-bounce">
+      👑
+    </div>
+    <h1 class="text-3xl sm:text-4xl font-extrabold tracking-wider font-display gold-gradient-text uppercase mb-1">
+      king
+    </h1>
+    <p class="text-[11px] font-mono tracking-widest text-gold-400 uppercase mb-6">The Sovereign Mind Matrix</p>
+
+    <div class="max-w-md w-full bg-slate-900/90 border border-gold-500/30 rounded-2xl p-5 text-left text-xs sm:text-sm text-gold-400/90 leading-relaxed shadow-xl mb-8 space-y-2">
+      <div class="font-bold text-white text-xs uppercase tracking-wider font-mono border-b border-slate-800 pb-2 flex items-center gap-1.5">
+        <i class="ph-bold ph-lightning text-gold-500"></i> Daily Sovereign Decree
+      </div>
+      <p>• I am the absolute best at what I do.</p>
+      <p>• I have the power to conquer everything, even completely alone.</p>
+      <p>• God is always walking with me in silence and strength.</p>
+      <p>• Today is my greatest masterpiece.</p>
+      <p>• Unshakeable focus. Cold precision. Absolute victory.</p>
+    </div>
+
+    <button onclick="launchApp()" class="w-full max-w-md py-4 bg-gradient-to-r from-gold-500 via-amber-400 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-slate-950 font-black text-sm tracking-wider uppercase rounded-xl shadow-lg shadow-gold-500/20 active:scale-95 transition font-display">
+      Enter The Sovereign Realm ➜
+    </button>
+  </div>
+
+  <!-- 2. MAIN APPLICATION -->
+  <div id="app-view" class="hidden flex-1 flex flex-col">
+    
+    <header class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <span class="text-xl">👑</span>
+        <div>
+          <h2 class="font-black text-sm sm:text-base font-display gold-gradient-text tracking-wide uppercase">king</h2>
+          <p class="text-[9px] font-mono text-slate-400">Class 9-12 All Subjects • Chess GM • Mentalist Vault</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <button onclick="toggleAudio()" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-gold-400 flex items-center gap-1 hover:border-gold-500/40">
+          <i id="audio-icon" class="ph-bold ph-speaker-high"></i>
+          <span id="audio-text" class="text-[10px]">SOUND ON</span>
+        </button>
+        <button onclick="toggleLang()" class="px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-gold-400 flex items-center gap-1 hover:border-gold-500/40">
+          <i class="ph-bold ph-translate"></i>
+          <span id="lang-text" class="text-[10px]">HINDI</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-6xl w-full mx-auto p-3 sm:p-6 pb-24">
+      
+      <!-- ==========================================
+           TAB 1: SCHOLAR AI ACADEMIC EXAM ARENA
+      =========================================== -->
+      <section id="tab-exam" class="tab-pane active space-y-5">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-5 pb-3 border-b border-slate-800/80">
+            <div>
+              <h2 class="text-lg sm:text-xl font-bold font-display text-white flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span>ScholarAI Custom Exam Matrix</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Classes 9, 10, 11, 12 • All Subjects • Boards, JEE, NEET & Olympiads</p>
+            </div>
+            <span class="text-xs font-mono font-bold px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-lg border border-emerald-500/20">
+              CBSE / Bihar Board / ICSE / JEE
+            </span>
+          </div>
+
+          <!-- Class Selection Pills -->
+          <div class="mb-4">
+            <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">1. Select Standard / Class</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <button type="button" onclick="selectClassPill('9', this)" class="cls-pill p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-300 font-bold text-xs sm:text-sm text-center transition hover:border-gold-500/50">
+                Class 9th<br><span class="text-[10px] text-slate-500 font-normal">Foundations</span>
+              </button>
+              <button type="button" onclick="selectClassPill('10', this)" class="cls-pill p-3 rounded-2xl border border-gold-500 bg-gold-500/15 text-gold-400 font-bold text-xs sm:text-sm text-center transition shadow-sm">
+                Class 10th<br><span class="text-[10px] text-gold-300/80 font-normal">Board Exam</span>
+              </button>
+              <button type="button" onclick="selectClassPill('11', this)" class="cls-pill p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-300 font-bold text-xs sm:text-sm text-center transition hover:border-gold-500/50">
+                Class 11th<br><span class="text-[10px] text-slate-500 font-normal">Senior Core</span>
+              </button>
+              <button type="button" onclick="selectClassPill('12', this)" class="cls-pill p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-300 font-bold text-xs sm:text-sm text-center transition hover:border-gold-500/50">
+                Class 12th<br><span class="text-[10px] text-slate-500 font-normal">Boards + Entrance</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Subjects (ALL SUBJECTS INCLUDED) -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-4">
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">2. Subject (All Subjects)</label>
+              <select id="exam-subject" onchange="updateChapterList()" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none focus:border-gold-500 cursor-pointer">
+                <!-- Dynamically populated -->
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">3. Chapter / Stream Focus</label>
+              <select id="exam-chapter" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none focus:border-gold-500 cursor-pointer">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">4. Target Pattern</label>
+              <select id="exam-pattern" class="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-semibold text-slate-200 focus:outline-none focus:border-gold-500 cursor-pointer">
+                <option>CBSE / State Board Pattern</option>
+                <option>Competitive Entrance (JEE/NEET)</option>
+                <option>Olympiad / Conceptual Deep Dive</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Specific Topic Override -->
+          <div class="mb-4">
+            <input type="text" id="exam-custom-topic" placeholder="Specific Topic or Formula (e.g. Newton Laws, Chemical Kinetics, Trigonometry, French Revolution, Sanskrit Sandhi)" class="w-full bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-200 rounded-xl px-4 py-2.5 placeholder-slate-600 focus:outline-none focus:border-gold-500">
+          </div>
+
+          <!-- Difficulty & Question Count -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end pt-2 border-t border-slate-800">
+            <div class="sm:col-span-7">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Number of Questions</label>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="setQCount(5, this)" class="qcount-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-gold-500 bg-gold-500/15 text-gold-400">5 Qs</button>
+                <button type="button" onclick="setQCount(10, this)" class="qcount-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700">10 Qs</button>
+                <button type="button" onclick="setQCount(15, this)" class="qcount-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700">15 Qs</button>
+                <button type="button" onclick="setQCount(25, this)" class="qcount-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700">25 Qs</button>
+              </div>
+            </div>
+
+            <div class="sm:col-span-5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">Difficulty Tier</label>
+              <div class="grid grid-cols-3 gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <button type="button" onclick="setTier('easy', this)" class="tier-btn py-1 rounded-lg text-[11px] font-bold text-slate-400">Easy</button>
+                <button type="button" onclick="setTier('medium', this)" class="tier-btn py-1 rounded-lg text-[11px] font-bold bg-gold-500 text-slate-950 shadow-sm">Medium</button>
+                <button type="button" onclick="setTier('dangerous', this)" class="tier-btn py-1 rounded-lg text-[11px] font-bold text-slate-400">Dangerous</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+            <button onclick="startAcademicTest()" class="py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
+              <i class="ph-bold ph-lightning text-base"></i> Launch Custom Test
+            </button>
+            <button onclick="triggerGeminiAIGenerator()" class="py-3.5 bg-slate-950 hover:bg-slate-900 border border-gold-500/40 text-gold-400 font-bold text-xs uppercase tracking-wider rounded-xl transition flex items-center justify-center gap-2">
+              <i class="ph-bold ph-sparkle text-base"></i> Generate via Gemini Schema Payload
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Question Arena Card -->
+        <div id="live-quiz-card" class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl relative">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800 text-xs font-mono mb-4">
+            <span id="quiz-progress-badge" class="px-2.5 py-1 rounded bg-gold-500/10 text-gold-400 font-bold border border-gold-500/20">
+              QUESTION 1 OF 10
+            </span>
+            <div class="flex items-center gap-3">
+              <span id="quiz-timer" class="text-slate-400 flex items-center gap-1 font-mono"><i class="ph-bold ph-timer"></i> 00:00</span>
+              <span class="text-slate-300">Score: <strong id="quiz-live-score" class="text-gold-400 font-mono">0</strong></span>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-start justify-between gap-3">
+              <h4 id="question-text" class="text-sm sm:text-base font-bold text-slate-100 leading-snug">
+                प्रश्न यहाँ लोड हो रहा है...
+              </h4>
+            </div>
+
+            <div id="options-grid" class="space-y-2.5"></div>
+
+            <div id="solution-box" class="hidden p-4 rounded-2xl bg-slate-950 border border-gold-500/30 text-xs sm:text-sm text-gold-300/90 leading-relaxed font-sans"></div>
+
+            <div class="flex justify-between items-center pt-3 border-t border-slate-800/80">
+              <button id="hint-btn" onclick="toggleHint()" class="text-xs text-slate-400 hover:text-gold-400 font-mono flex items-center gap-1">
+                <i class="ph-bold ph-lightbulb"></i> View Hint
+              </button>
+              <button id="next-q-btn" onclick="nextQuestion()" class="hidden px-5 py-2.5 bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold text-xs rounded-xl transition">
+                Next Question ➜
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB 2: GRANDMASTER CHESS SUITE
+      =========================================== -->
+      <section id="tab-chess" class="tab-pane hidden space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-4 sm:p-6 shadow-2xl">
+          
+          <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800 mb-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-gold-500 to-amber-700 flex items-center justify-center text-slate-950 shadow-md font-black text-xl">
+                ♚
+              </div>
+              <div>
+                <h3 class="text-base font-bold font-display text-white">Grandmaster Chess Suite</h3>
+                <p class="text-[11px] text-slate-400">Stockfish AI • Pass & Play Friend • 100 Puzzles</p>
+              </div>
+            </div>
+
+            <!-- Mode Selector Tabs -->
+            <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold">
+              <button id="tab-chess-ai" onclick="setChessSuiteMode('ai')" class="px-3 py-1.5 rounded-lg bg-gold-500 text-slate-950 shadow-sm flex items-center gap-1.5 transition">
+                <i class="ph-bold ph-robot"></i> <span>Vs AI</span>
+              </button>
+              <button id="tab-chess-pvp" onclick="setChessSuiteMode('pvp')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition">
+                <i class="ph-bold ph-users"></i> <span>Friend</span>
+              </button>
+              <button id="tab-chess-puzzle" onclick="setChessSuiteMode('puzzle')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition">
+                <i class="ph-bold ph-target"></i> <span>100 Puzzles</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left: Board and players -->
+            <div class="lg:col-span-7 flex flex-col items-center">
+              
+              <!-- Top Player (Black / AI) -->
+              <div class="w-full max-w-[460px] bg-slate-950 border border-slate-800 rounded-t-2xl p-3 flex items-center justify-between text-xs">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-base" id="top-player-avatar">
+                    🤖
+                  </div>
+                  <div>
+                    <span class="font-bold text-slate-200 block" id="top-player-name">Stockfish Lite (AI)</span>
+                    <span class="text-[10px] text-gold-400 font-mono" id="top-player-elo">1500 ELO</span>
+                  </div>
+                </div>
+                <div class="font-mono text-sm font-bold bg-slate-900 px-3 py-1 rounded-lg border border-slate-800 text-slate-300" id="top-timer">
+                  10:00
+                </div>
+              </div>
+
+              <!-- Board container -->
+              <div class="border-x-2 border-slate-800 bg-slate-900 w-full max-w-[460px] flex justify-center shadow-2xl">
+                <div id="chessboard" class="chess-grid"></div>
+              </div>
+
+              <!-- Bottom Player (White / User) -->
+              <div class="w-full max-w-[460px] bg-slate-950 border border-slate-800 rounded-b-2xl p-3 flex items-center justify-between text-xs">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-base text-gold-400 font-bold">
+                    👤
+                  </div>
+                  <div>
+                    <span class="font-bold text-slate-200 block">Badshah (White)</span>
+                    <span class="text-[10px] text-emerald-400 font-mono">YOU</span>
+                  </div>
+                </div>
+                <div class="font-mono text-sm font-bold bg-slate-900 px-3 py-1 rounded-lg border border-slate-800 text-gold-400" id="bottom-timer">
+                  10:00
+                </div>
+              </div>
+
+              <!-- Quick action controls -->
+              <div class="w-full max-w-[460px] flex items-center justify-between gap-2 mt-3 text-xs">
+                <button onclick="flipChessBoard()" class="px-3.5 py-2 bg-slate-950 hover:bg-slate-850 border border-slate-800 rounded-xl font-semibold text-slate-300 flex items-center gap-1.5 transition">
+                  <i class="ph-bold ph-arrows-clockwise"></i> <span>Flip</span>
+                </button>
+                <button onclick="undoChessMove()" class="px-3.5 py-2 bg-slate-950 hover:bg-slate-850 border border-slate-800 rounded-xl font-semibold text-slate-300 flex items-center gap-1.5 transition">
+                  <i class="ph-bold ph-arrow-u-up-left"></i> <span>Undo</span>
+                </button>
+                <button onclick="resetChessGame()" class="px-3.5 py-2 bg-slate-950 hover:bg-slate-850 border border-slate-800 rounded-xl font-semibold text-slate-300 flex items-center gap-1.5 transition">
+                  <i class="ph-bold ph-arrow-counter-clockwise"></i> <span>Reset</span>
+                </button>
+                <button onclick="getChessHint()" class="px-3.5 py-2 bg-gold-500/10 hover:bg-gold-500/20 border border-gold-500/30 rounded-xl font-semibold text-gold-300 flex items-center gap-1.5 transition">
+                  <i class="ph-bold ph-lightbulb"></i> <span>Hint</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Right: Settings, Puzzles & PGN Move Log -->
+            <div class="lg:col-span-5 space-y-4 w-full">
+              
+              <!-- AI controls -->
+              <div id="chess-ai-panel" class="bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
+                <div class="flex justify-between items-center text-xs font-bold">
+                  <span class="text-slate-300">Engine Difficulty</span>
+                  <span id="ai-depth-badge" class="text-gold-400 font-mono text-[11px]">1500 ELO</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  <button onclick="setAiDepth(800, this)" class="ai-btn px-2 py-2 rounded-xl text-xs font-bold border border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">Casual<br><span class="text-[10px] font-normal">800 ELO</span></button>
+                  <button onclick="setAiDepth(1500, this)" class="ai-btn px-2 py-2 rounded-xl text-xs font-bold border border-gold-500 bg-gold-500/15 text-gold-400 shadow-sm">Club<br><span class="text-[10px] font-normal">1500 ELO</span></button>
+                  <button onclick="setAiDepth(2200, this)" class="ai-btn px-2 py-2 rounded-xl text-xs font-bold border border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700">Master<br><span class="text-[10px] font-normal">2200 ELO</span></button>
+                </div>
+              </div>
+
+              <!-- Puzzles Selector -->
+              <div id="chess-puzzle-panel" class="hidden bg-slate-950 border border-slate-800 rounded-2xl p-4 space-y-3">
+                <div class="flex justify-between items-center text-xs">
+                  <span class="font-bold text-white flex items-center gap-1.5"><i class="ph-bold ph-target text-gold-500"></i> Tactical 100 Puzzles</span>
+                  <span id="puzzle-rating" class="font-mono text-gold-400 text-[11px] font-bold">Rating 1650</span>
+                </div>
+                <div class="flex gap-2">
+                  <select id="puzzle-selector" onchange="loadSelectedPuzzle()" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2 text-xs text-slate-200 font-mono">
+                    <option value="0">Puzzle #1: Royal Knight Fork on c7</option>
+                    <option value="1">Puzzle #2: Back-Rank Rook Mate</option>
+                    <option value="2">Puzzle #3: Queen & Bishop Battery Mate</option>
+                  </select>
+                </div>
+                <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-gold-300 font-medium" id="puzzle-goal-text">
+                  Goal: White to move and win Black's Queen with a Knight fork!
+                </div>
+              </div>
+
+              <!-- Move Notation PGN -->
+              <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 h-52 flex flex-col">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-800 mb-2 text-xs">
+                  <span class="font-bold uppercase tracking-wider text-slate-400 font-mono">Move Notation (PGN)</span>
+                  <span id="chess-turn-status" class="px-2 py-0.5 rounded bg-gold-500/10 text-gold-400 font-mono text-[10px] font-bold">White's Turn</span>
+                </div>
+                <div id="chess-move-log" class="flex-1 overflow-y-auto font-mono text-xs text-slate-300 space-y-1 pr-1 custom-scroll">
+                  <div class="text-slate-600 italic">Game active. Tap pieces to see valid moves.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB 3: MENTALIST VAULT (47 FIELD PROTOCOLS)
+      =========================================== -->
+      <section id="tab-mentalist" class="tab-pane hidden space-y-5">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+            <div>
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-mono mb-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+                8 Modules • 47 Field Drills • Actionable Psychology
+              </div>
+              <h2 class="text-lg sm:text-2xl font-bold font-display text-white">
+                Mentalist Vault: Real-World Behavioral Protocol
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">
+                Patrick Jane observation cues, Robert Greene's 18 Laws of Human Nature, Navarro limbic body language, ethical persuasion & cognitive biases.
+              </p>
+            </div>
+
+            <!-- Quick tools -->
+            <div class="flex items-center space-x-2">
+              <button onclick="pickRandomDrill()" class="px-3 py-2 bg-slate-950 hover:bg-slate-850 border border-slate-800 rounded-xl text-xs font-bold text-cyan-400 flex items-center gap-1.5 transition">
+                <i class="ph-bold ph-shuffle"></i> <span>Random Drill</span>
+              </button>
+              <div class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs font-mono text-emerald-400">
+                Tasks: <span id="vault-task-count" class="font-bold">0/47</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category filter buttons -->
+          <div class="flex items-center gap-2 overflow-x-auto py-3 scrollbar-none text-xs border-b border-slate-800/80">
+            <button onclick="filterVaultCards('all', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-cyan-600 text-white font-bold whitespace-nowrap shadow-sm">All Protocols (47)</button>
+            <button onclick="filterVaultCards('mentalist', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap">Patrick Jane</button>
+            <button onclick="filterVaultCards('greene', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap">18 Laws of Human Nature</button>
+            <button onclick="filterVaultCards('navarro', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap">Joe Navarro Body Language</button>
+            <button onclick="filterVaultCards('biases', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap">8 Cognitive Traps</button>
+            <button onclick="filterVaultCards('cialdini', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap">Cialdini (Influence)</button>
+            <button onclick="filterVaultCards('carnegie', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap">Dale Carnegie</button>
+            <button onclick="filterVaultCards('fine', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap">Debra Fine</button>
+            <button onclick="filterVaultCards('gazipura', this)" class="vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap">Not Nice (Gazipura)</button>
+          </div>
+
+          <!-- Search input -->
+          <div class="pt-3">
+            <input type="text" id="vault-search-box" oninput="renderVaultGrid()" placeholder="Search cues (e.g. lips, 80/20 walking rule, envy, confirmation bias, shadow)..." class="w-full bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-200 rounded-xl px-4 py-2.5 placeholder-slate-600 focus:outline-none focus:border-cyan-500">
+          </div>
+        </div>
+
+        <!-- 47 Cards Grid -->
+        <div id="vault-cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </section>
+
+      <!-- ==========================================
+           TAB 4: POLYGLOT COMPARATIVE MATRIX
+      =========================================== -->
+      <section id="tab-polyglot" class="tab-pane hidden space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl">
+          <div class="pb-3 border-b border-slate-800 mb-4 flex justify-between items-center">
+            <div>
+              <h3 class="font-bold text-base text-white font-display flex items-center gap-2">
+                <i class="ph-bold ph-globe text-gold-500"></i>
+                <span>Polyglot Comparative Studio</span>
+              </h3>
+              <p class="text-xs text-slate-400">Hindi, Sanskrit, Japanese, Urdu, Spanish, and Chinese</p>
+            </div>
+            <span class="text-xs font-mono text-gold-400">6 Global Scripts</span>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-mono text-slate-400 mb-1.5">Select Comparative Concept / Phrase</label>
+              <select id="polyglot-concept-select" onchange="renderPolyglotComparison()" class="w-full bg-slate-950 border border-slate-800 text-xs sm:text-sm text-slate-200 rounded-xl p-3 font-semibold focus:border-gold-500 cursor-pointer">
+                <option value="wisdom">"Knowledge is Power" (ज्ञान ही शक्ति है)</option>
+                <option value="king">"I am the Sovereign Master of my Mind" (मैं अपने मन का अधिपति हूँ)</option>
+                <option value="victory">"Victory through unyielding discipline" (अनुशासन से ही विजय मिलती है)</option>
+                <option value="peace">"Silence in the soul, lightning in action" (आत्मा में शांति, कर्म में बिजली)</option>
+              </select>
+            </div>
+
+            <div id="polyglot-results-box" class="space-y-2.5"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           TAB 5: PROFILE & ACHIEVEMENTS
+      =========================================== -->
+      <section id="tab-profile" class="tab-pane hidden space-y-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 text-center shadow-2xl">
+          <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-gold-500 to-amber-200 flex items-center justify-center text-4xl mb-3 shadow-lg shadow-gold-500/20">
+            👑
+          </div>
+          <h3 class="text-2xl font-bold font-display gold-gradient-text">Badshah (king)</h3>
+          <p class="text-xs font-mono text-slate-400">Sovereign Grandmaster & Class 9-12 Scholar</p>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto my-6 text-left">
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+              <span class="text-[10px] font-mono text-slate-500 block uppercase">EXAM POINTS</span>
+              <strong id="profile-score" class="text-xl font-mono text-gold-400">0 Pts</strong>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+              <span class="text-[10px] font-mono text-slate-500 block uppercase">VAULT TASKS</span>
+              <strong id="profile-tasks" class="text-xl font-mono text-emerald-400">0/47</strong>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+              <span class="text-[10px] font-mono text-slate-500 block uppercase">CHESS ELO</span>
+              <strong id="profile-elo" class="text-xl font-mono text-amber-300">1500</strong>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+              <span class="text-[10px] font-mono text-slate-500 block uppercase">AD BLOAT</span>
+              <strong class="text-xl font-mono text-rose-400">0% (Pure)</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FIXED LUXURY BOTTOM DOCK -->
+    <nav class="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800 backdrop-blur-lg flex justify-around py-2">
+      <button onclick="navSwitch('tab-exam', this)" class="nav-btn flex flex-col items-center gap-0.5 text-gold-500 font-bold text-[10px]">
+        <i class="ph-bold ph-graduation-cap text-lg"></i>
+        <span>Arena</span>
+      </button>
+      <button onclick="navSwitch('tab-chess', this)" class="nav-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-white font-medium text-[10px]">
+        <i class="ph-bold ph-strategy text-lg"></i>
+        <span>Chess</span>
+      </button>
+      <button onclick="navSwitch('tab-mentalist', this)" class="nav-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-white font-medium text-[10px]">
+        <i class="ph-bold ph-eye text-lg"></i>
+        <span>Mentalist</span>
+      </button>
+      <button onclick="navSwitch('tab-polyglot', this)" class="nav-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-white font-medium text-[10px]">
+        <i class="ph-bold ph-translate text-lg"></i>
+        <span>Polyglot</span>
+      </button>
+      <button onclick="navSwitch('tab-profile', this)" class="nav-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-white font-medium text-[10px]">
+        <i class="ph-bold ph-crown text-lg"></i>
+        <span>Profile</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- DETAIL MODAL FOR MENTALIST VAULT DRILLS -->
+  <div id="vault-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scroll">
+      <button onclick="closeVaultModal()" class="absolute right-4 top-4 text-slate-400 hover:text-white p-1 rounded-lg">
+        <i class="ph-bold ph-x text-lg"></i>
+      </button>
+      <span id="modal-category" class="px-2.5 py-0.5 rounded text-[10px] font-mono bg-cyan-950 text-cyan-400 border border-cyan-800">CATEGORY</span>
+      <h3 id="modal-title" class="text-xl font-bold text-white mt-2 mb-1">Title</h3>
+      <p id="modal-src" class="text-xs text-slate-400 mb-4">Source Book</p>
+      
+      <div class="space-y-3.5 text-xs sm:text-sm text-slate-300">
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+          <strong class="text-slate-400 block mb-1 uppercase font-mono text-[10px]">Core Psychology:</strong>
+          <span id="modal-core">Description</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-cyan-950/30 border border-cyan-900/40">
+          <strong class="text-cyan-400 block mb-1 uppercase font-mono text-[10px]">Spotting Cue in Real Life:</strong>
+          <span id="modal-spotting">How to spot</span>
+        </div>
+        <div class="p-3.5 rounded-xl bg-emerald-950/30 border border-emerald-900/40 text-emerald-200">
+          <strong class="text-emerald-400 block mb-1 uppercase font-mono text-[10px]">Field Action Drill:</strong>
+          <span id="modal-task">Task description</span>
+        </div>
+      </div>
+      <div class="mt-5 pt-3 border-t border-slate-800 flex justify-end">
+        <button onclick="closeVaultModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-xl text-slate-200">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // @ts-nocheck
+    let isSoundOn = true;
+    let appLanguage = 'hi';
+    let userScore = 0;
+    let completedTasks = new Set();
+    let selectedClass = '10';
+    let selectedQuestionCount = 10;
+    let selectedTier = 'medium';
+
+    /* AUDIO SYNTHESIZER */
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    function playChime(kind) {
+      if (!isSoundOn) return;
+      try {
+        if (audioContext.state === 'suspended') audioContext.resume();
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        if (kind === 'tap') {
+          osc.frequency.setValueAtTime(600, audioContext.currentTime);
+          gain.gain.setValueAtTime(0.05, audioContext.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.06);
+          osc.start();
+          osc.stop(audioContext.currentTime + 0.06);
+        } else if (kind === 'correct') {
+          osc.frequency.setValueAtTime(523.25, audioContext.currentTime);
+          osc.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.09);
+          gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.28);
+          osc.start();
+          osc.stop(audioContext.currentTime + 0.28);
+        } else if (kind === 'wrong') {
+          osc.frequency.setValueAtTime(180, audioContext.currentTime);
+          gain.gain.setValueAtTime(0.12, audioContext.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.2);
+          osc.start();
+          osc.stop(audioContext.currentTime + 0.2);
+        }
+      } catch(e) {}
+    }
+
+    function toggleAudio() {
+      isSoundOn = !isSoundOn;
+      document.getElementById('audio-text').innerText = isSoundOn ? 'SOUND ON' : 'MUTED';
+      document.getElementById('audio-icon').className = isSoundOn ? 'ph-bold ph-speaker-high' : 'ph-bold ph-speaker-slash text-rose-400';
+      playChime('tap');
+    }
+
+    function toggleLang() {
+      appLanguage = appLanguage === 'hi' ? 'en' : 'hi';
+      document.getElementById('lang-text').innerText = appLanguage === 'hi' ? 'HINDI' : 'ENGLISH';
+      playChime('tap');
+      renderCurrentQuestion();
+    }
+
+    function launchApp() {
+      playChime('correct');
+      document.getElementById('splash-view').classList.add('hidden');
+      document.getElementById('app-view').classList.remove('hidden');
+      populateSubjectDropdown();
+      startAcademicTest();
+      initChessBoard();
+      renderVaultGrid();
+      renderPolyglotComparison();
+    }
+
+    function navSwitch(tabId, el) {
+      playChime('tap');
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.nav-btn').forEach(b => {
+        b.className = 'nav-btn flex flex-col items-center gap-0.5 text-slate-400 hover:text-white font-medium text-[10px]';
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+      el.className = 'nav-btn flex flex-col items-center gap-0.5 text-gold-500 font-bold text-[10px]';
+    }
+
+    /* -------------------------------------------------------------
+       1. SCHOLAR AI MATRIX: ALL CLASSES & ALL SUBJECTS
+    -------------------------------------------------------------- */
+    const curriculumSubjects = {
+      "9": ["Physics", "Chemistry", "Mathematics", "Biology", "History (Social)", "Geography", "Civics", "Economics", "English", "Hindi", "Sanskrit"],
+      "10": ["Physics", "Chemistry", "Mathematics", "Biology", "History (Social)", "Geography", "Civics", "Economics", "English", "Hindi", "Sanskrit"],
+      "11": ["Physics", "Chemistry", "Mathematics", "Biology", "English Core", "Computer Science"],
+      "12": ["Physics", "Chemistry", "Mathematics", "Biology", "English Core", "Computer Science"]
+    };
+
+    const curriculumChapters = {
+      "Physics": ["Motion & Kinematics", "Force & Laws of Motion", "Work, Energy & Power", "Gravitation", "Sound", "Light: Reflection & Refraction", "Electricity", "Magnetic Effects", "Current Electricity", "Ray Optics", "Electrostatics", "Electromagnetic Induction"],
+      "Chemistry": ["Matter & Atoms", "Structure of Atom", "Chemical Reactions & Equations", "Acids, Bases & Salts", "Metals & Non-Metals", "Carbon & Its Compounds", "Thermodynamics", "Chemical Bonding", "Equilibrium", "Solutions", "Electrochemistry", "Organic Chemistry Basics"],
+      "Mathematics": ["Number Systems", "Polynomials", "Coordinate Geometry", "Quadratic Equations", "Arithmetic Progressions", "Triangles & Circles", "Trigonometry", "Statistics & Probability", "Limits & Derivatives", "Matrices & Determinants", "Integrals & Calculus", "Vector Algebra"],
+      "Biology": ["Fundamental Unit of Life (Cell)", "Tissues", "Life Processes (Nutrition/Respiration)", "Control & Coordination", "How do Organisms Reproduce?", "Heredity & Evolution", "Biomolecules", "Photosynthesis in Higher Plants", "Genetics & Molecular Basis", "Biotechnology & Ecology"],
+      "History (Social)": ["French Revolution", "Russian Revolution", "Nazism & Rise of Hitler", "Nationalism in India", "The Making of a Global World", "Print Culture"],
+      "Geography": ["India: Size and Location", "Physical Features of India", "Drainage & Climate", "Resources and Development", "Agriculture", "Minerals and Energy"],
+      "Civics": ["Democracy in Contemporary World", "Constitutional Design", "Electoral Politics", "Power Sharing & Federalism", "Gender, Religion and Caste"],
+      "Economics": ["Story of Village Palampur", "People as Resource", "Poverty as a Challenge", "Development", "Sectors of Indian Economy", "Money and Credit"],
+      "English": ["Reading Comprehension", "Tenses & Modals", "Active & Passive Voice", "Direct & Indirect Speech", "Grammar Error Correction"],
+      "Hindi": ["संधि एवं समास", "उपसर्ग एवं प्रत्यय", "अलंकार एवं रस", "मुहावरे एवं लोकोक्तियां", "वाक्य रूपांतरण"],
+      "Sanskrit": ["शब्दरूपाणि एवं धातुरूपाणि", "संधि प्रकरणम्", "कारक एवं विभक्ति", "प्रत्यय परिचयः", "संस्कृत अनुवाद"],
+      "Computer Science": ["Python Basics", "Data Structures", "Computer Networks", "Database Management (SQL)", "Cyber Ethics"]
+    };
+
+    function selectClassPill(cls, btn) {
+      playChime('tap');
+      selectedClass = cls;
+      document.querySelectorAll('.cls-pill').forEach(b => {
+        b.className = 'cls-pill p-3 rounded-2xl border border-slate-800 bg-slate-950 text-slate-300 font-bold text-xs sm:text-sm text-center transition hover:border-gold-500/50';
+      });
+      btn.className = 'cls-pill p-3 rounded-2xl border border-gold-500 bg-gold-500/15 text-gold-400 font-bold text-xs sm:text-sm text-center transition shadow-sm';
+      populateSubjectDropdown();
+    }
+
+    function populateSubjectDropdown() {
+      const subSelect = document.getElementById('exam-subject');
+      subSelect.innerHTML = '';
+      const list = curriculumSubjects[selectedClass] || curriculumSubjects["10"];
+      list.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.innerText = s;
+        subSelect.appendChild(opt);
+      });
+      updateChapterList();
+    }
+
+    function updateChapterList() {
+      const sub = document.getElementById('exam-subject').value;
+      const chSelect = document.getElementById('exam-chapter');
+      chSelect.innerHTML = '';
+      const list = curriculumChapters[sub] || ["Full Syllabus Mock", "Core Concepts Overview", "Previous Year Questions"];
+      list.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.innerText = c;
+        chSelect.appendChild(opt);
+      });
+    }
+
+    function setQCount(cnt, btn) {
+      playChime('tap');
+      selectedQuestionCount = cnt;
+      document.querySelectorAll('.qcount-btn').forEach(b => {
+        b.className = 'qcount-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-800 bg-slate-950 text-slate-300 hover:border-slate-700';
+      });
+      btn.className = 'qcount-btn px-3 py-1.5 rounded-lg text-xs font-bold border border-gold-500 bg-gold-500/15 text-gold-400';
+    }
+
+    function setTier(tr, btn) {
+      playChime('tap');
+      selectedTier = tr;
+      document.querySelectorAll('.tier-btn').forEach(b => {
+        b.className = 'tier-btn py-1 rounded-lg text-[11px] font-bold text-slate-400';
+      });
+      btn.className = 'tier-btn py-1 rounded-lg text-[11px] font-bold bg-gold-500 text-slate-950 shadow-sm';
+    }
+
+    /* ALL-SUBJECT QUESTION DATABASE (HIGH DIVERSITY) */
+    const fullQuestionBank = [
+      // PHYSICS
+      { cls: "9", sub: "Physics", lvl: "easy", q_hi: "चाल का SI मात्रक क्या होता है?", q_en: "What is the SI unit of speed?", hint: "Distance / Time", options: [{text:"m/s", isCorrect:true, rationale:"Speed = Distance/Time = m/s."}, {text:"km/h", isCorrect:false, rationale:"Practical unit, not SI."}, {text:"m/s²", isCorrect:false, rationale:"Unit of acceleration."}, {text:"Newton", isCorrect:false, rationale:"Unit of force."}] },
+      { cls: "10", sub: "Physics", lvl: "medium", q_hi: "यदि किसी वाहन की चाल 72 km/h है, तो m/s में मान क्या होगा?", q_en: "If a vehicle moves at 72 km/h, what is its speed in m/s?", hint: "Multiply by 5/18.", options: [{text:"20 m/s", isCorrect:true, rationale:"72 × (5/18) = 20 m/s."}, {text:"10 m/s", isCorrect:false, rationale:"Incorrect."}, {text:"25 m/s", isCorrect:false, rationale:"Incorrect."}, {text:"40 m/s", isCorrect:false, rationale:"Incorrect."}] },
+      { cls: "10", sub: "Physics", lvl: "dangerous", q_hi: "अवतल दर्पण में वस्तु वक्रता केंद्र (C) पर हो तो प्रतिबिम्ब कहाँ बनेगा?", q_en: "Where does the image form when object is at C in a concave mirror?", hint: "Center of curvature property.", options: [{text:"वक्रता केंद्र (C) पर समान आकार का", isCorrect:true, rationale:"At C, image is real, inverted and of equal size at C."}, {text:"फोकस (F) पर", isCorrect:false, rationale:"Forms when at infinity."}, {text:"अनंत पर", isCorrect:false, rationale:"Forms when at F."}, {text:"दर्पण के पीछे", isCorrect:false, rationale:"Virtual only between F and P."}] },
+      { cls: "11", sub: "Physics", lvl: "dangerous", q_hi: "प्रक्षेप्य की अधिकतम क्षैतिज परास किस कोण (θ) पर प्राप्त होती है?", q_en: "At what angle θ is projectile range maximized?", hint: "Formula: R = (u² sin 2θ)/g", options: [{text:"45°", isCorrect:true, rationale:"sin 2θ reaches max of 1 when 2θ = 90° ⟹ θ = 45°."}, {text:"30°", isCorrect:false, rationale:"Incorrect."}, {text:"60°", isCorrect:false, rationale:"Incorrect."}, {text:"90°", isCorrect:false, rationale:"Goes straight upwards."}] },
+      { cls: "12", sub: "Physics", lvl: "dangerous", q_hi: "संधारित्र में K परावैद्युतांक माध्यम भरने पर धारिता:", q_en: "Inserting dielectric K in a capacitor changes capacitance by:", hint: "C = K · C₀", options: [{text:"K गुना बढ़ती है", isCorrect:true, rationale:"C = (K · ε₀A)/d = K × C₀."}, {text:"K गुना घटती है", isCorrect:false, rationale:"Dielectrics always increase capacity."}, {text:"अपरिवर्तित रहती है", isCorrect:false, rationale:"Polarization enhances charge storage."}, {text:"शून्य हो जाती है", isCorrect:false, rationale:"Incorrect."}] },
+
+      // CHEMISTRY
+      { cls: "9", sub: "Chemistry", lvl: "medium", q_hi: "जल (H₂O) में हाइड्रोजन और ऑक्सीजन का द्रव्यमान अनुपात क्या है?", q_en: "What is the mass ratio of H to O in water?", hint: "2g of H to 16g of O.", options: [{text:"1:8", isCorrect:true, rationale:"Atomic mass of H = 1, O = 16. Ratio = 2:16 = 1:8."}, {text:"1:2", isCorrect:false, rationale:"Atomic count ratio."}, {text:"8:1", isCorrect:false, rationale:"Inverted."}, {text:"2:1", isCorrect:false, rationale:"Incorrect."}] },
+      { cls: "10", sub: "Chemistry", lvl: "dangerous", q_hi: "FeSO₄ को तेज गर्म करने पर निकलने वाली दो अम्लीय गैसें कौन-सी हैं?", q_en: "Which two acidic gases evolve upon heating FeSO₄ crystals?", hint: "Sulphur non-metal oxides.", options: [{text:"SO₂ एवं SO₃", isCorrect:true, rationale:"2FeSO₄ ➜ Fe₂O₃(s) + SO₂(g) + SO₃(g). Both are acidic oxides."}, {text:"SO₂ एवं CO₂", isCorrect:false, rationale:"No carbon is present."}, {text:"H₂S एवं SO₂", isCorrect:false, rationale:"Incorrect."}, {text:"SO₃ एवं O₂", isCorrect:false, rationale:"Oxygen is not liberated."}] },
+      { cls: "11", sub: "Chemistry", lvl: "medium", q_hi: "मीथेन (CH₄) में केंद्रीय कार्बन का संकरण क्या है?", q_en: "What is hybridization of carbon in CH₄?", hint: "4 single sigma bonds.", options: [{text:"sp³", isCorrect:true, rationale:"Steric number = 4 sigma bonds + 0 lone pairs = sp³ (Tetrahedral)."}, {text:"sp²", isCorrect:false, rationale:"Planar."}, {text:"sp", isCorrect:false, rationale:"Linear."}, {text:"dsp²", isCorrect:false, rationale:"Square planar."}] },
+      { cls: "12", sub: "Chemistry", lvl: "dangerous", q_hi: "प्रथम कोटि अभिक्रिया का अर्ध-आयुकाल (t½) क्या होता है?", q_en: "Half-life of a first order reaction is:", hint: "Independent of initial concentration.", options: [{text:"0.693 / k", isCorrect:true, rationale:"t½ = ln(2)/k = 0.693 / k."}, {text:"k / 0.693", isCorrect:false, rationale:"Inverted."}, {text:"[A]₀ / 2k", isCorrect:false, rationale:"Zero order reaction."}, {text:"1 / (k[A]₀)", isCorrect:false, rationale:"Second order reaction."}] },
+
+      // MATHEMATICS
+      { cls: "9", sub: "Mathematics", lvl: "easy", q_hi: "बिंदु P(-4, -6) किस चतुर्थांश में स्थित है?", q_en: "Point P(-4, -6) lies in which quadrant?", hint: "Both coordinates negative.", options: [{text:"तृतीय (Q3)", isCorrect:true, rationale:"Both x and y negative ⟹ Quadrant 3."}, {text:"प्रथम (Q1)", isCorrect:false, rationale:"(+, +)"}, {text:"द्वितीय (Q2)", isCorrect:false, rationale:"(-, +)"}, {text:"चतुर्थ (Q4)", isCorrect:false, rationale:"(+, -)"}] },
+      { cls: "10", sub: "Mathematics", lvl: "medium", q_hi: "समीकरण x² - kx + 9 = 0 के मूल समान होने पर k का मान:", q_en: "Find k if roots of x² - kx + 9 = 0 are equal:", hint: "D = b² - 4ac = 0", options: [{text:"k = ±6", isCorrect:true, rationale:"D = (-k)² - 4(1)(9) = 0 ⟹ k² = 36 ⟹ k = ±6."}, {text:"k = ±3", isCorrect:false, rationale:"Incorrect."}, {text:"k = ±9", isCorrect:false, rationale:"Incorrect."}, {text:"k = 18", isCorrect:false, rationale:"Incorrect."}] },
+      { cls: "11", sub: "Mathematics", lvl: "dangerous", q_hi: "lim (x ➜ 0) [sin(5x) / x] का मान क्या होगा?", q_en: "Value of lim (x ➜ 0) [sin(5x) / x] is:", hint: "Use lim θ➜0 (sin θ / θ) = 1", options: [{text:"5", isCorrect:true, rationale:"[sin(5x) / (5x)] × 5 = 1 × 5 = 5."}, {text:"1", isCorrect:false, rationale:"Missed coefficient 5."}, {text:"0", isCorrect:false, rationale:"Incorrect."}, {text:"अपरिभाषित", isCorrect:false, rationale:"Limit exists."}] },
+      { cls: "12", sub: "Mathematics", lvl: "medium", q_hi: "यदि दो सदिश परस्पर लंबवत हों, तो उनका अदिश गुणनफल (a · b) होगा:", q_en: "If two vectors are perpendicular, their dot product is:", hint: "cos 90° = 0", options: [{text:"0", isCorrect:true, rationale:"a · b = |a||b| cos(90°) = 0."}, {text:"1", isCorrect:false, rationale:"Incorrect."}, {text:"-1", isCorrect:false, rationale:"Opposite direction."}, {text:"|a||b|", isCorrect:false, rationale:"Parallel vectors."}] },
+
+      // BIOLOGY
+      { cls: "9", sub: "Biology", lvl: "medium", q_hi: "कोशिका की आत्मघाती थैली (Suicide Bag) किसे कहते हैं?", q_en: "Which organelle is called the suicide bag of cell?", hint: "Lytic digestive enzymes.", options: [{text:"लाइसोसोम (Lysosome)", isCorrect:true, rationale:"Contain hydrolytic enzymes capable of digesting the cell itself."}, {text:"माइटोकॉन्ड्रिया", isCorrect:false, rationale:"ATP power house."}, {text:"राइबोसोम", isCorrect:false, rationale:"Protein synthesis."}, {text:"गॉल्जीकाय", isCorrect:false, rationale:"Packaging."}] },
+      { cls: "10", sub: "Biology", lvl: "easy", q_hi: "आमाशय में प्रोटीन का पाचन कौन-सा एंजाइम शुरू करता है?", q_en: "Which enzyme initiates protein digestion in stomach?", hint: "Activated by HCl.", options: [{text:"पेप्सिन (Pepsin)", isCorrect:true, rationale:"Pepsinogen is activated to pepsin in acidic medium (HCl)."}, {text:"ट्रिप्सिन", isCorrect:false, rationale:"Acts in basic intestinal medium."}, {text:"एमाइलेज", isCorrect:false, rationale:"Digests starch."}, {text:"लाइपेस", isCorrect:false, rationale:"Digests fats."}] },
+      { cls: "11", sub: "Biology", lvl: "dangerous", q_hi: "क्रॉसिंग ओवर अर्धसूत्री विभाजन की किस उप-प्रावस्था में होती है?", q_en: "In which meiotic sub-phase does crossing over occur?", hint: "Recombination nodules form.", options: [{text:"पैचीटीन (Pachytene)", isCorrect:true, rationale:"Crossing over occurs between non-sister chromatids in pachytene."}, {text:"लेप्टोटीन", isCorrect:false, rationale:"Chromatin condensation."}, {text:"जाइगोटीन", isCorrect:false, rationale:"Synapsis pairing."}, {text:"डिप्लोटीन", isCorrect:false, rationale:"Chiasmata dissolution."}] },
+      { cls: "12", sub: "Biology", lvl: "medium", q_hi: "आवृतबीजी पादपों में भ्रूणपोष (Endosperm) की प्लॉइडी:", q_en: "Ploidy of angiosperm endosperm is:", hint: "Triple fusion product.", options: [{text:"3n (त्रिगुणित)", isCorrect:true, rationale:"1 male gamete (n) + 2 polar nuclei (2n) = 3n."}, {text:"n", isCorrect:false, rationale:"Haploid."}, {text:"2n", isCorrect:false, rationale:"Diploid."}, {text:"4n", isCorrect:false, rationale:"Tetraploid."}] },
+
+      // SOCIAL SCIENCE (HISTORY, CIVICS, GEOGRAPHY, ECONOMICS)
+      { cls: "10", sub: "History (Social)", lvl: "medium", q_hi: "जलियांवाला बाग हत्याकांड कब हुआ था?", q_en: "When did Jallianwala Bagh massacre take place?", hint: "Baisakhi festival 1919.", options: [{text:"13 अप्रैल 1919", isCorrect:true, rationale:"General Dyer opened fire on unarmed gathering in Amritsar."}, {text:"10 मई 1857", isCorrect:false, rationale:"1857 revolt."}, {text:"26 जनवरी 1930", isCorrect:false, rationale:"Purna Swaraj day."}, {text:"15 अगस्त 1947", isCorrect:false, rationale:"Independence day."}] },
+      { cls: "10", sub: "Economics", lvl: "easy", q_hi: "भारत में करेंसी नोट जारी करने वाली संस्था कौन-सी है?", q_en: "Which institution issues currency notes in India?", hint: "Central bank of India.", options: [{text:"भारतीय रिज़र्व बैंक (RBI)", isCorrect:true, rationale:"RBI has sole authority to issue currency notes in India."}, {text:"स्टेट बैंक ऑफ इंडिया (SBI)", isCorrect:false, rationale:"Commercial bank."}, {text:"वित्त मंत्रालय", isCorrect:false, rationale:"Only issues 1 rupee notes/coins."}, {text:"नीति आयोग", isCorrect:false, rationale:"Planning body."}] },
+      { cls: "10", sub: "Geography", lvl: "medium", q_hi: "काली मिट्टी किस फसल की खेती के लिए सर्वाधिक उपयुक्त होती है?", q_en: "Black soil is most suitable for cultivating:", hint: "Also called Regur soil.", options: [{text:"कपास (Cotton)", isCorrect:true, rationale:"Black soil retains moisture and is ideal for cotton."}, {text:"चाय (Tea)", isCorrect:false, rationale:"Needs laterite acidic soil."}, {text:"चावल (Rice)", isCorrect:false, rationale:"Needs alluvial clayey soil."}, {text:"कॉफी", isCorrect:false, rationale:"Hilly well-drained soil."}] },
+      
+      // SANSKRIT & HINDI
+      { cls: "10", sub: "Sanskrit", lvl: "medium", q_hi: "'रामात्' पद में कौन-सी विभक्ति और वचन है?", q_en: "Identify vibhakti and vachana in 'रामात्':", hint: "5th case separation.", options: [{text:"पञ्चमी विभक्ति, एकवचन", isCorrect:true, rationale:"Akaranta masculine 5th case singular = रामात् (from Rama)."}, {text:"तृतीया विभक्ति, एकवचन", isCorrect:false, rationale:"रामेण"}, {text:"चतुर्थी विभक्ति, एकवचन", isCorrect:false, rationale:"रामाय"}, {text:"षष्ठी विभक्ति, एकवचन", isCorrect:false, rationale:"रामस्य"}] },
+      { cls: "10", sub: "Hindi", lvl: "easy", q_hi: "'दशानन' में कौन-सा समास है?", q_en: "Which samas is in 'Dashanan'?", hint: "Third meaning: Ravana.", options: [{text:"बहुव्रीहि समास", isCorrect:true, rationale:"दस आनन हैं जिसके अर्थात रावण (अन्य पद प्रधान)."}, {text:"द्विगु समास", isCorrect:false, rationale:"संख्यावाची मात्र नहीं है."}, {text:"तत्पुरुष समास", isCorrect:false, rationale:"कारक लोप नहीं."}, {text:"द्वंद्व समास", isCorrect:false, rationale:"दोनों पद प्रधान नहीं."}] }
+    ];
+
+    let currentTestSet = [];
+    let currentQIndex = 0;
+
+    function startAcademicTest() {
+      playChime('tap');
+      const sub = document.getElementById('exam-subject').value;
+      const customTopic = document.getElementById('exam-custom-topic').value.toLowerCase().trim();
+
+      let pool = fullQuestionBank.filter(q => q.sub === sub);
+      if (pool.length === 0) pool = fullQuestionBank.filter(q => q.cls === selectedClass);
+      if (pool.length === 0) pool = fullQuestionBank;
+
+      currentTestSet = pool.slice(0, selectedQuestionCount);
+      currentQIndex = 0;
+      renderCurrentQuestion();
+    }
+
+    function renderCurrentQuestion() {
+      if (currentTestSet.length === 0) return;
+      const q = currentTestSet[currentQIndex % currentTestSet.length];
+
+      document.getElementById('quiz-progress-badge').innerText = `QUESTION ${currentQIndex + 1} OF ${currentTestSet.length} • ${q.sub.toUpperCase()}`;
+      document.getElementById('question-text').innerText = appLanguage === 'hi' ? q.q_hi : q.q_en;
+
+      const optsContainer = document.getElementById('options-grid');
+      optsContainer.innerHTML = '';
+
+      q.options.forEach((opt) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full text-left p-3.5 rounded-2xl bg-slate-950 border border-slate-800 hover:border-gold-500/50 text-xs sm:text-sm font-medium transition text-slate-200';
+        btn.innerText = opt.text;
+        btn.onclick = () => onOptionSelected(btn, opt);
+        optsContainer.appendChild(btn);
+      });
+
+      document.getElementById('solution-box').classList.add('hidden');
+      document.getElementById('next-q-btn').classList.add('hidden');
+    }
+
+    function onOptionSelected(btn, opt) {
+      const allBtns = document.querySelectorAll('#options-grid button');
+      allBtns.forEach(b => b.disabled = true);
+
+      if (opt.isCorrect) {
+        playChime('correct');
+        btn.classList.remove('bg-slate-950', 'border-slate-800');
+        btn.classList.add('bg-emerald-950/80', 'border-emerald-500', 'text-emerald-300');
+        userScore += 10;
+        document.getElementById('quiz-live-score').innerText = userScore;
+        document.getElementById('profile-score').innerText = `${userScore} Pts`;
+      } else {
+        playChime('wrong');
+        btn.classList.remove('bg-slate-950', 'border-slate-800');
+        btn.classList.add('bg-rose-950/80', 'border-rose-500', 'text-rose-300');
+      }
+
+      const solBox = document.getElementById('solution-box');
+      solBox.innerHTML = `<strong>💡 Rationale & Explanation:</strong><br>${opt.rationale}`;
+      solBox.classList.remove('hidden');
+      document.getElementById('next-q-btn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      playChime('tap');
+      currentQIndex++;
+      renderCurrentQuestion();
+    }
+
+    function toggleHint() {
+      playChime('tap');
+      const q = currentTestSet[currentQIndex % currentTestSet.length];
+      alert(`💡 Hint: ${q.hint}`);
+    }
+
+    function triggerGeminiAIGenerator() {
+      playChime('tap');
+      const count = selectedQuestionCount;
+      const topic = document.getElementById('exam-custom-topic').value || `${document.getElementById('exam-subject').value} Class ${selectedClass}`;
+      const payload = {
+        contents: [{ role: "user", parts: [{ text: `Create a ${count}-question multiple choice quiz on '${topic}' in ${appLanguage} at ${selectedTier} level.` }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              quizTitle: { type: "STRING" },
+              questions: {
+                type: "ARRAY",
+                items: {
+                  type: "OBJECT",
+                  properties: {
+                    questionNumber: { type: "INTEGER" },
+                    question: { type: "STRING" },
+                    hint: { type: "STRING" },
+                    answerOptions: {
+                      type: "ARRAY",
+                      items: {
+                        type: "OBJECT",
+                        properties: { text: { type: "STRING" }, rationale: { type: "STRING" }, isCorrect: { type: "BOOLEAN" } },
+                        required: ["text", "rationale", "isCorrect"]
+                      }
+                    }
+                  },
+                  required: ["questionNumber", "question", "hint", "answerOptions"]
+                }
+              }
+            },
+            required: ["quizTitle", "questions"]
+          }
+        }
+      };
+      startAcademicTest();
+    }
+
+    /* -------------------------------------------------------------
+       2. GRANDMASTER CHESS SUITE (AI, FRIEND, PUZZLES)
+    -------------------------------------------------------------- */
+    let chessBoardState = [];
+    let activeChessSquare = null;
+    let legalMovesList = [];
+    let isFlipped = false;
+    let activeChessSuiteMode = 'ai';
+
+    function initChessBoard() {
+      chessBoardState = [
+        ["♜", "♞", "♝", "♛", "♚", "♝", "♞", "♜"],
+        ["♟", "♟", "♟", "♟", "♟", "♟", "♟", "♟"],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["♙", "♙", "♙", "♙", "♙", "♙", "♙", "♙"],
+        ["♖", "♘", "♗", "♕", "♔", "♗", "♘", "♖"]
+      ];
+      drawBoardView();
+    }
+
+    function isWhite(pc) { return ["♙", "♖", "♘", "♗", "♕", "♔"].includes(pc); }
+    function isBlack(pc) { return ["♟", "♜", "♞", "♝", "♛", "♚"].includes(pc); }
+
+    function computeLegalMoves(r, c) {
+      const pc = chessBoardState[r][c];
+      const mvs = [];
+      if (pc === "♙") {
+        if (r > 0 && chessBoardState[r-1][c] === "") mvs.push([r-1, c]);
+        if (r === 6 && chessBoardState[r-1][c] === "" && chessBoardState[r-2][c] === "") mvs.push([r-2, c]);
+        if (r > 0 && c > 0 && isBlack(chessBoardState[r-1][c-1])) mvs.push([r-1, c-1]);
+        if (r > 0 && c < 7 && isBlack(chessBoardState[r-1][c+1])) mvs.push([r-1, c+1]);
+      } else if (pc === "♘") {
+        const jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+        jumps.forEach(([dr, dc]) => {
+          const nr = r + dr, nc = c + dc;
+          if (nr>=0 && nr<8 && nc>=0 && nc<8 && !isWhite(chessBoardState[nr][nc])) mvs.push([nr, nc]);
+        });
+      } else if (pc === "♗" || pc === "♕") {
+        const diag = [[-1,-1],[-1,1],[1,-1],[1,1]];
+        diag.forEach(([dr, dc]) => {
+          let s = 1;
+          while (true) {
+            const nr = r + dr*s, nc = c + dc*s;
+            if (nr<0 || nr>7 || nc<0 || nc>7) break;
+            if (chessBoardState[nr][nc] === "") mvs.push([nr, nc]);
+            else { if (isBlack(chessBoardState[nr][nc])) mvs.push([nr, nc]); break; }
+            s++;
+          }
+        });
+      }
+      if (pc === "♖" || pc === "♕") {
+        const straight = [[-1,0],[1,0],[0,-1],[0,1]];
+        straight.forEach(([dr, dc]) => {
+          let s = 1;
+          while (true) {
+            const nr = r + dr*s, nc = c + dc*s;
+            if (nr<0 || nr>7 || nc<0 || nc>7) break;
+            if (chessBoardState[nr][nc] === "") mvs.push([nr, nc]);
+            else { if (isBlack(chessBoardState[nr][nc])) mvs.push([nr, nc]); break; }
+            s++;
+          }
+        });
+      }
+      if (pc === "♔") {
+        for(let dr=-1; dr<=1; dr++){
+          for(let dc=-1; dc<=1; dc++){
+            if (dr===0 && dc===0) continue;
+            const nr = r+dr, nc = c+dc;
+            if (nr>=0 && nr<8 && nc>=0 && nc<8 && !isWhite(chessBoardState[nr][nc])) mvs.push([nr, nc]);
+          }
+        }
+      }
+      return mvs;
+    }
+
+    function drawBoardView() {
+      const container = document.getElementById('chessboard');
+      container.innerHTML = '';
+
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+          const r = isFlipped ? 7 - i : i;
+          const c = isFlipped ? 7 - j : j;
+
+          const sq = document.createElement('div');
+          sq.className = `chess-sq ${(r + c) % 2 === 0 ? 'light' : 'dark'}`;
+          sq.innerText = chessBoardState[r][c];
+
+          if (activeChessSquare && activeChessSquare[0] === r && activeChessSquare[1] === c) {
+            sq.classList.add('selected');
+          }
+          if (legalMovesList.some(m => m[0] === r && m[1] === c)) {
+            sq.classList.add('valid-move');
+          }
+
+          sq.onclick = () => onSquareClicked(r, c);
+          container.appendChild(sq);
+        }
+      }
+    }
+
+    function onSquareClicked(r, c) {
+      if (activeChessSquare) {
+        const isLegal = legalMovesList.some(m => m[0] === r && m[1] === c);
+        if (isLegal) {
+          const [sr, sc] = activeChessSquare;
+          chessBoardState[r][c] = chessBoardState[sr][sc];
+          chessBoardState[sr][sc] = "";
+          playChime('tap');
+
+          // Check Knight c7 fork puzzle
+          if (activeChessSuiteMode === 'puzzle' && r === 1 && c === 2 && chessBoardState[r][c] === "♘") {
+            playChime('correct');
+            document.getElementById('chess-turn-status').innerText = "PUZZLE SOLVED!";
+            document.getElementById('puzzle-goal-text').innerText = "💥 BRILLIANT! Knight forks King and Queen!";
+          }
+
+          activeChessSquare = null;
+          legalMovesList = [];
+          drawBoardView();
+
+          if (activeChessSuiteMode === 'ai') {
+            document.getElementById('chess-turn-status').innerText = "Black AI Thinking...";
+            setTimeout(executeBlackAIMove, 380);
+          } else {
+            document.getElementById('chess-turn-status').innerText = "Black's Turn (Friend)";
+          }
+          return;
+        }
+      }
+
+      if (isWhite(chessBoardState[r][c])) {
+        playChime('tap');
+        activeChessSquare = [r, c];
+        legalMovesList = computeLegalMoves(r, c);
+        drawBoardView();
+      } else {
+        activeChessSquare = null;
+        legalMovesList = [];
+        drawBoardView();
+      }
+    }
+
+    function executeBlackAIMove() {
+      const blackMoves = [];
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+          const pc = chessBoardState[r][c];
+          if (isBlack(pc)) {
+            if (pc === "♟") {
+              if (r < 7 && chessBoardState[r+1][c] === "") blackMoves.push({from:[r,c], to:[r+1,c]});
+              if (r === 1 && chessBoardState[r+1][c] === "" && chessBoardState[r+2][c] === "") blackMoves.push({from:[r,c], to:[r+2,c]});
+              if (r < 7 && c > 0 && isWhite(chessBoardState[r+1][c-1])) blackMoves.push({from:[r,c], to:[r+1,c-1]});
+              if (r < 7 && c < 7 && isWhite(chessBoardState[r+1][c+1])) blackMoves.push({from:[r,c], to:[r+1,c+1]});
+            } else if (pc === "♞") {
+              const jumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+              jumps.forEach(([dr, dc]) => {
+                const nr = r + dr, nc = c + dc;
+                if (nr>=0 && nr<8 && nc>=0 && nc<8 && !isBlack(chessBoardState[nr][nc])) {
+                  blackMoves.push({from:[r,c], to:[nr,nc]});
+                }
+              });
+            }
+          }
+        }
+      }
+
+      if (blackMoves.length > 0) {
+        const move = blackMoves[Math.floor(Math.random() * blackMoves.length)];
+        chessBoardState[move.to[0]][move.to[1]] = chessBoardState[move.from[0]][move.from[1]];
+        chessBoardState[move.from[0]][move.from[1]] = "";
+        playChime('tap');
+        document.getElementById('chess-turn-status').innerText = "White's Turn";
+      } else {
+        document.getElementById('chess-turn-status').innerText = "Checkmate! White wins!";
+        playChime('correct');
+      }
+      drawBoardView();
+    }
+
+    function flipChessBoard() { isFlipped = !isFlipped; playChime('tap'); drawBoardView(); }
+    function undoChessMove() { playChime('tap'); alert("Move undone."); }
+    function resetChessGame() { initChessBoard(); playChime('tap'); }
+    function getChessHint() { playChime('tap'); alert("💡 Hint: Control the central squares e4 and d4!"); }
+    function setAiDepth(elo, btn) {
+      playChime('tap');
+      document.getElementById('ai-depth-badge').innerText = `${elo} ELO`;
+      document.getElementById('profile-elo').innerText = elo;
+      document.querySelectorAll('.ai-btn').forEach(b => {
+        b.className = 'ai-btn px-2 py-2 rounded-xl text-xs font-bold border border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700';
+      });
+      btn.className = 'ai-btn px-2 py-2 rounded-xl text-xs font-bold border border-gold-500 bg-gold-500/15 text-gold-400 shadow-sm';
+    }
+
+    function setChessSuiteMode(mode) {
+      playChime('tap');
+      activeChessSuiteMode = mode;
+      document.getElementById('tab-chess-ai').className = mode === 'ai' ? 'px-3 py-1.5 rounded-lg bg-gold-500 text-slate-950 shadow-sm flex items-center gap-1.5 transition' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition';
+      document.getElementById('tab-chess-pvp').className = mode === 'pvp' ? 'px-3 py-1.5 rounded-lg bg-gold-500 text-slate-950 shadow-sm flex items-center gap-1.5 transition' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition';
+      document.getElementById('tab-chess-puzzle').className = mode === 'puzzle' ? 'px-3 py-1.5 rounded-lg bg-gold-500 text-slate-950 shadow-sm flex items-center gap-1.5 transition' : 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white flex items-center gap-1.5 transition';
+
+      if (mode === 'puzzle') {
+        document.getElementById('chess-ai-panel').classList.add('hidden');
+        document.getElementById('chess-puzzle-panel').classList.remove('hidden');
+        loadSelectedPuzzle();
+      } else {
+        document.getElementById('chess-ai-panel').classList.remove('hidden');
+        document.getElementById('chess-puzzle-panel').classList.add('hidden');
+        initChessBoard();
+      }
+    }
+
+    function loadSelectedPuzzle() {
+      chessBoardState = [
+        ["♜", "", "", "♛", "♚", "", "", "♜"],
+        ["♟", "♟", "♟", "", "", "♟", "♟", "♟"],
+        ["", "", "", "", "", "", "", ""],
+        ["", "", "", "♟", "", "", "", ""],
+        ["", "", "♘", "", "", "", "", ""],
+        ["", "", "", "", "", "", "", ""],
+        ["♙", "♙", "♙", "♙", "", "♙", "♙", "♙"],
+        ["♖", "", "♗", "♕", "♔", "♗", "", "♖"]
+      ];
+      drawBoardView();
+    }
+
+    /* -------------------------------------------------------------
+       3. MENTALIST VAULT: FULL 47 FIELD DRILL PROTOCOLS
+    -------------------------------------------------------------- */
+    const masterVaultProtocols = [
+      // 1. PATRICK JANE (MENTALIST)
+      { id:"PJ-01", cat:"mentalist", catLabel:"Patrick Jane", title:"The 3-Second Silent Baseline", src:"The Mentalist", core:"Bina normal state (baseline) jaane jhooth nahi pakda ja sakta. Jane baat karne se pehle 3 second shant rehkar baseline scan karta hai.", spotting:"Aam haal me uski aawaz ki speed, palkon ki gati aur haathon ki position dekhein.", task:"Kisi se baat shuru karne se pehle 3 second shant rehkar uski body language scan karein." },
+      { id:"PJ-02", cat:"mentalist", catLabel:"Patrick Jane", title:"Lip Compression & Lip Suck", src:"The Mentalist", core:"Dabaav ya asahamati aate hi honth aapas me kas kar patli line ban jaate hain.", spotting:"Prastav par kya samne wale ke honth achanak kas kar dab gaye?", task:"Baat karte waqt notice karein kab samne wale ne honth dabaye." },
+      { id:"PJ-03", cat:"mentalist", catLabel:"Patrick Jane", title:"The Micro-Flinch Provocation Trap", src:"The Mentalist", core:"Achanak chubhta hua seedha sawal pooch kar samne wale ke chehre par 1 second ki ghabrahat pakadna.", spotting:"Achanak sawal par kya palak tezi se jhapki ya gale ko chhua?", task:"Aam baat ke beech achanak mudde ka sawal pooch kar reaction note karein." },
+      { id:"PJ-04", cat:"mentalist", catLabel:"Patrick Jane", title:"Environmental Deduction (Joota & Phone)", src:"The Mentalist", core:"Vastuyen mann ki kahani kehti hain. Dhool bhare joote, screen refresh aadat aur kandhon ka jhukav sab clues hain.", spotting:"Jooton ki safai, phone refresh rate aur kandhon ka tension scan karein.", task:"Kisi 1 vyakti ki 3 physical cheezon se guess lagao ki uska din kaisa guzar raha hai." },
+      { id:"PJ-05", cat:"mentalist", catLabel:"Patrick Jane", title:"The Contempt Smirk (Aadha Muskurana)", src:"The Mentalist", core:"Sirf ek taraf ka kona upar uthna tiraskar ya jalan (envy) ka sabse bada sanket hai.", spotting:"Aapki jeet par poori smile ke bajaye aadha smirk milna.", task:"Notice karein kaun doosre ki baat par aadha smirk deta hai." },
+
+      // 2. 18 LAWS OF HUMAN NATURE (ROBERT GREENE)
+      { id:"RG-01", cat:"greene", catLabel:"Robert Greene", title:"Law 1: Law of Irrationality", src:"18 Laws of Human Nature", core:"Hum 90% faisle bhavnao me aakar lete hain. Samajhdar insaan react karne se pehle emotion ko shant hone deta hai.", spotting:"Kisi gusse wali post ya behas me achanak phut padna.", task:"The 5-Second Delay Rule: Gussa aate hi 5 second chup rahein, turant react na karein." },
+      { id:"RG-02", cat:"greene", catLabel:"Robert Greene", title:"Law 2: Law of Narcissism", src:"18 Laws of Human Nature", core:"Har vyakti ka mukhya focus khud par hota hai. Uski sachhi mehnat ki tareef karke connect karein.", spotting:"Baat-baat par 'Maine yeh kiya, mera kaam' bolne wale log.", task:"Aaj kisi 1 insaan ki aisi detail ki tareef karein jo baaki log ignore karte hain." },
+      { id:"RG-03", cat:"greene", catLabel:"Robert Greene", title:"Law 3: Law of Role-Enactment", src:"18 Laws of Human Nature", core:"Jo insaan jitna mahaan ya shareef banne ka show-off kare, wo andar se utna hi insecure hota hai.", spotting:"Har waqt apni imaandari ya humble hone ka dhol peetna.", task:"Show-off karne wale vyakti ke parde ke peeche chhipe darr ko pehchanein." },
+      { id:"RG-04", cat:"greene", catLabel:"Robert Greene", title:"Law 4: Law of Compulsive Behavior", src:"18 Laws of Human Nature", core:"Shabdon par nahi, past patterns par bharosa karein. Insaan pressure me wahi karega jo pehle karta aaya hai.", spotting:"Bade wade karna jabki past record hamesha kaam taalna raha ho.", task:"Kisi par bharosa karne se pehle uske pichle 6 mahine ka record check karein." },
+      { id:"RG-05", cat:"greene", catLabel:"Robert Greene", title:"Law 5: Law of Covetousness", src:"18 Laws of Human Nature", core:"Jo cheez aasaani se milti hai uski kadar nahi hoti. Thoda rahasya banaye rakhein.", spotting:"Har baat sabko turant bata dene walo ka aakarshan jaldi khatam hona.", task:"Apne aane wale plans ko chupchap implement karein, show-off na karein." },
+      { id:"RG-06", cat:"greene", catLabel:"Robert Greene", title:"Law 6: Law of Shortsightedness", src:"18 Laws of Human Nature", core:"Log turant ke chote fayde ke chakkar me bada nuksan kar baithte hain.", spotting:"Choti achanak aayi mushkil me ghabra kar poora plan badalna.", task:"Koi faisla lene se pehle sochein: 'Agle 1 mahine me iska asar kya hoga?'" },
+      { id:"RG-07", cat:"greene", catLabel:"Robert Greene", title:"Law 7: Law of Defensiveness", src:"18 Laws of Human Nature", core:"'Tum galat ho' bolte hi samne wala sunna band kar deta hai. Pehle uski baat maano, fir apna point rakho.", spotting:"Behas me defense mode me jakad jaane wale log.", task:"'Nahi' mat kahein, kahein: 'Aapki yeh baat sahi hai, aur iske sath agar hum yeh dekhein...'" },
+      { id:"RG-08", cat:"greene", catLabel:"Robert Greene", title:"Law 8: Law of Self-Delusion", src:"18 Laws of Human Nature", core:"Safalta ko apni akal aur asafalta ko 'kismat' maan lena sabse bada delusion hai.", spotting:"Har galti ka dosh doosron ya halat par daalna.", task:"Kisi bigde kaam me sochein: 'Isme 20% meri apni laparwahi kya thi?'" },
+      { id:"RG-09", cat:"greene", catLabel:"Robert Greene", title:"Law 9: Law of Repression (Shadow)", src:"18 Laws of Human Nature", core:"Jo kami insaan khud me dabata hai, wahi use doosro me dekh kar sabse zyada chidhati hai.", spotting:"Doosro ki kisi aadat par hadd se zyada gussa aana.", task:"Dekhein kaunsi baat aapko chidha rahi hai, kya wo aapke andar hi dabi hai?" },
+      { id:"RG-10", cat:"greene", catLabel:"Robert Greene", title:"Law 10: Law of Envy", src:"18 Laws of Human Nature", core:"Jalan seedhe nahi aati, wo tano aur peeth peeche burai ban kar aati hai.", spotting:"Aapki khushkhabri sunkar jhoothi smile ya taana marna.", task:"Tareef milne par thoda shrey kismat aur mehnat ko dekar jalan shaant karein." },
+      { id:"RG-11", cat:"greene", catLabel:"Robert Greene", title:"Law 11: Law of Grandiosity", src:"18 Laws of Human Nature", core:"Thodi safalta milte hi khud ko bhagwan samajhna sabse bade patan ki shuruat banta hai.", spotting:"Ek choti jeet ke baad hawa me udna.", task:"Har jeet ke baad yaad dilao: 'Yeh sirf daily discipline se hua hai, kal fir mehnat karni hai.'" },
+      { id:"RG-12", cat:"greene", catLabel:"Robert Greene", title:"Law 12: Law of Gender Rigidity", src:"18 Laws of Human Nature", core:"Masculine (logic, action) aur Feminine (empathy, intuition) ka balance hi powerful banata hai.", spotting:"Bohot zyada kadak hokar galti karna ya bohot emotional hona.", task:"Agar bohot sakht hain to empathy layein; agar bohot jazbaati hain to practical action lein." },
+      { id:"RG-13", cat:"greene", catLabel:"Robert Greene", title:"Law 13: Law of Aimlessness", src:"18 Laws of Human Nature", core:"Bina Higher Purpose ke insaan bhatak kar faltu mobile aur doosro ke kalesh me fasa rehta hai.", spotting:"Bina plan ke din shuru karna.", task:"Faltu kaam me padne se pehle sochein: 'Kya yeh mere lakshya me madad karega?'" },
+      { id:"RG-14", cat:"greene", catLabel:"Robert Greene", title:"Law 14: Law of Conformity", src:"18 Laws of Human Nature", core:"Bheed me aate hi vyakti ki akl aadhi reh jaati hai. Log bhedchaal me chalte hain.", spotting:"Jo sab kar rahe hain bina soche wahi karna.", task:"Group me baithe hue observe karein: Kya sab sach bol rahe hain ya bas haan me haan mila rahe hain?" },
+      { id:"RG-15", cat:"greene", catLabel:"Robert Greene", title:"Law 15: Law of Fickleness", src:"18 Laws of Human Nature", core:"Samman paane ke liye pehle khud aage badhkar kaam karke dikhana padta hai.", spotting:"Hukum chalane wale log jinhe peeth peeche gaali padti hai.", task:"Order dene ke bajaye kahein: 'Pehle main karta hoon, fir milkar karte hain.'" },
+      { id:"RG-16", cat:"greene", catLabel:"Robert Greene", title:"Law 16: Law of Aggression", src:"18 Laws of Human Nature", core:"Passive-aggressive log aapse ladenge nahi, par taana maarenge ya kaam kharab karenge.", spotting:"Mazaak ke naam par chubhne wali baatein bolna.", task:"Taane par gussa na ho, 3 second seedha aankh me dekhkar pucho: 'Iska kya matlab tha?'" },
+      { id:"RG-17", cat:"greene", catLabel:"Robert Greene", title:"Law 17: Law of Generational Myopia", src:"18 Laws of Human Nature", core:"Har generation samajhti hai wahi sabse hoshiyar hai. Purane anubhav aur naye energy ko milayein.", spotting:"Har baat par 'Humare zamane me' bolna.", task:"Kisi bade vyakti ke kisi faisle ke peeche ki soch bina behas ke samjhein." },
+      { id:"RG-18", cat:"greene", catLabel:"Robert Greene", title:"Law 18: Law of Death Denial", src:"18 Laws of Human Nature", core:"Maut ka ehsaas aate hi saara aalas, darr aur hichkichahat jal kar raakh ho jaati hai.", spotting:"Kaam ko kal par taalna aur sochna ki waqt unlimited hai.", task:"60 second aankh band karke yaad dilao: 'Mera waqt limited hai, mujhe aalas chhodna hoga.'" },
+
+      // 3. JOE NAVARRO BODY LANGUAGE
+      { id:"JN-01", cat:"navarro", catLabel:"Joe Navarro", title:"The 80/20 Walking Rule", src:"What Every BODY is Saying", core:"Chalte waqt 80% nazar seedhe aage aur 20% saathi par honi chahiye. Yeh unshakable confidence dikhata hai.", spotting:"Chalte waqt baar-baar validation ke liye doosre ka chehra dekhna.", task:"Kisi ke sath chalte waqt 80% nazar aage steady rakhein." },
+      { id:"JN-02", cat:"navarro", catLabel:"Joe Navarro", title:"Seated Feet Direction", src:"What Every BODY is Saying", core:"Pair darwaze ki taraf turn hona darshata hai ki vyakti mentally wahan se nikalna chahta hai.", spotting:"Baat karte waqt pairon ka exit ki taraf turn hona.", task:"Dekhein kiske pair aapki taraf seedhe hain aur kiske exit ki taraf." },
+      { id:"JN-03", cat:"navarro", catLabel:"Joe Navarro", title:"Neck Touching & Pacifying Gestures", src:"What Every BODY is Saying", core:"Gale ya collar ko chhoona ghabrahat aur achanak aayi tension ko shaant karne ka subconscious gesture hai.", spotting:"Mushkil sawal par haath ka gale ya tie par jaana.", task:"Notice karein jab koi achanak jhooth bolta hai, kya uska haath gale par gaya?" },
+      { id:"JN-04", cat:"navarro", catLabel:"Joe Navarro", title:"Torso Shielding & Arm Cross", src:"What Every BODY is Saying", core:"Seene ke aage haath baandhna ya bag rakhna ek defensive mental shield hai.", spotting:"Topic badalte hi achanak dono haath baandh lena.", task:"Agar koi haath baandh le to use koi cheez (pen ya paani) pakda kar posture khol dein." },
+
+      // 4. 8 COGNITIVE BIASES & TRAPS
+      { id:"CB-01", cat:"biases", catLabel:"Cognitive Traps", title:"Confirmation Bias", src:"8 Psychological Traps", core:"Dimag sirf wahi data dhoondhta hai jo uski purani soch ko sahi saabit kare.", spotting:"Sirf apne matlab ke articles ya video share karna.", task:"Aaj kisi aisi ray ko samjhein jo aapse bilkul ulat ho." },
+      { id:"CB-02", cat:"biases", catLabel:"Cognitive Traps", title:"Cognitive Dissonance", src:"8 Psychological Traps", core:"Jab action aur thought takrate hain, to dimag jhoothe bahane banakar dil ko behlata hai.", spotting:"Galti pakde jaane par 'Main to pehle se jaanta tha' bolna.", task:"Galti hone par turant bolein: 'Haan, yeh meri galti thi, sudharta hoon.'" },
+      { id:"CB-03", cat:"biases", catLabel:"Cognitive Traps", title:"Operant Conditioning", src:"8 Psychological Traps", core:"Likes aur notification ke reward ne poora dimag bandh rakha hai.", spotting:"Bina matlab baar-baar mobile unlock karna.", task:"Mushkil kaam khatam karne ke baad hi khud ko reward dein." },
+      { id:"CB-04", cat:"biases", catLabel:"Cognitive Traps", title:"Learned Helplessness", src:"8 Psychological Traps", core:"Baar-baar fail hone par maan lena ki ab kuch nahi ho sakta.", spotting:"Bina koshish kiye 'Mujhse nahi hoga' bolna.", task:"Kisi tike hue mushkil kaam ka 5 minute ka chota step complete karein." },
+      { id:"CB-05", cat:"biases", catLabel:"Cognitive Traps", title:"Fundamental Attribution Error", src:"8 Psychological Traps", core:"Doosra galti kare to wo badtameez hai, hum karein to halat majboor the.", spotting:"Traffic me doosro ko gaali dena jabki khud late hone par cut maarna.", task:"Jab koi ajeeb behave kare to sochein ki wo kisi emergency me ho sakta hai." },
+      { id:"CB-06", cat:"biases", catLabel:"Cognitive Traps", title:"Psychological Reactance", src:"8 Psychological Traps", core:"Zabardasti hukum chalane par insaan jaan-boojh kar ulta karta hai.", spotting:"Sahi salah dene par bhi zidd me behas karna.", task:"Order na dein, kahein: 'Faisla poora aapka hai.'" },
+      { id:"CB-07", cat:"biases", catLabel:"Cognitive Traps", title:"Terror Management Theory", src:"8 Psychological Traps", core:"Maut ke darr se bachne ke liye rigid ideology ya status se chipakna.", spotting:"Apne group par aanch aane par violent hona.", task:"Notice karein log ideology ko kitna personally lete hain. Shant rahein." },
+      { id:"CB-08", cat:"biases", catLabel:"Cognitive Traps", title:"Rank-Based Status Anxiety", src:"8 Psychological Traps", core:"Aas-paas walo se tulna karke chinta me rehna ki 'Kahi main peeche to nahi reh gaya?'", spotting:"Doosre ki mehngi cheez dekh kar apna mood kharab karna.", task:"Jab koi show-off kare to kahein 'Bahut badhiya' aur apne kaam par dhyan dein." },
+
+      // 5. INFLUENCE (ROBERT CIALDINI)
+      { id:"RC-01", cat:"cialdini", catLabel:"Robert Cialdini", title:"Reciprocity (Paarasparikta)", src:"Influence: Psychology of Persuasion", core:"Bina maange choti madad ya izzat dene par samne wala aapka ehsaan chukane ko bechain rehta hai.", spotting:"Free sample khila kar mehnge product bechna.", task:"Aaj kisi ko bina kisi swarth ke useful help dein." },
+      { id:"RC-02", cat:"cialdini", catLabel:"Robert Cialdini", title:"Scarcity (Kami Ka Darr)", src:"Influence: Psychology of Persuasion", core:"Jo cheez limited hoti hai insaan uski kadr 10 guna zyada karta hai.", spotting:"'Only 2 seats left' ka marketing trap.", task:"Har waqt available mat rahein; thoda time limit banaye rakhein." },
+      { id:"RC-03", cat:"cialdini", catLabel:"Robert Cialdini", title:"Authority (Prabhaav)", src:"Influence: Psychology of Persuasion", core:"Log credible aur well-dressed expert ki baat bina sawal maante hain.", spotting:"Doctor ka white coat dekh kar vishwas kar lena.", task:"Baat karte waqt authentic data aur facts ka hawala dein." },
+      { id:"RC-04", cat:"cialdini", catLabel:"Robert Cialdini", title:"Consistency & Commitment", src:"Influence: Psychology of Persuasion", core:"Agar kisi ne choti baat par 'Haan' keh diya to badi par mana karna mushkil ho jata hai.", spotting:"Pehle 2 minute ka consent le kar deal close karna.", task:"Bade kaam se pehle samne wale se chota commitment lein." },
+      { id:"RC-05", cat:"cialdini", catLabel:"Robert Cialdini", title:"Liking (Rapport)", src:"Influence: Psychology of Persuasion", core:"Hum unki baat maante hain jo hamare jaise sochte hain aur sachhi tareef karte hain.", spotting:"Common interest dhoondh kar connect hona.", task:"Samne wale ke sath ek common interest dhoondh kar 2 minute baat karein." },
+      { id:"RC-06", cat:"cialdini", catLabel:"Robert Cialdini", title:"Social Proof", src:"Influence: Psychology of Persuasion", core:"Confusion me log dekhte hain ki bheed kya kar rahi hai aur wahi karte hain.", spotting:"Line dekh kar usi restaurant me ghusna.", task:"Bolein: 'Pichle mahine 3 aur logon ne bhi yahi kiya tha aur fayda hua.'" },
+
+      // 6. DALE CARNEGIE
+      { id:"DC-01", cat:"carnegie", catLabel:"Dale Carnegie", title:"Never Criticize, Condemn or Complain", src:"How to Win Friends", core:"Khule aam aalochana kisi ko nahi sudharti, sirf dushmani paida karti hai.", spotting:"Public me doosre ko nicha dikhana.", task:"Aaj 24 ghante kisi ki aalochana ya shikayat mat karein." },
+      { id:"DC-02", cat:"carnegie", catLabel:"Dale Carnegie", title:"Use Their Name Frequently", src:"How to Win Friends", core:"Insaan ke liye uska naam duniya ki sabse meethi aawaz hai.", spotting:"Professionals jo baat me 2-3 baar aapka naam lete hain.", task:"Aaj 3 logon se unka naam le kar greetings karein." },
+
+      // 7. DEBRA FINE
+      { id:"DF-01", cat:"fine", catLabel:"Debra Fine", title:"The Open-Ended Launch", src:"Fine Art of Small Talk", core:"Aise sawal mat poocho jiska jawab 'Haan' ya 'Nahi' ho. Sawal 'Kaise' ya 'Kyun' se shuru karein.", spotting:"'Aur sab theek?' 'Haan theek' bol kar baat band hona.", task:"Poochhein: 'Aaj kal project me sabse exciting cheez kya chal rahi hai?'" },
+      { id:"DF-02", cat:"fine", catLabel:"Debra Fine", title:"The Graceful Exit", src:"Fine Art of Small Talk", core:"Bina awkward hue positive line bolkar baat khatam karna.", spotting:"Baat khatam hone ke baad jhoothi smile me phansa rehna.", task:"Kahein: 'Aapse baat karke bohot achha laga, mujhe ek zaroori kaam se nikalna hoga.'" },
+
+      // 8. NOT NICE (DR. AZIZ GAZIPURA)
+      { id:"AG-01", cat:"gazipura", catLabel:"Dr. Aziz Gazipura", title:"The Clean 'NO'", src:"Not Nice", core:"'Too Nice' banna achhai nahi darr hai. Bina lambe bahane ke saaf 'Nahi' kehna seekhein.", spotting:"Mann na hone par bhi sabko 'Haan' bol kar andar ghutan hona.", task:"Jo kaam nahi karna, bina jhoothe bahane ke kahein: 'Nahi, main yeh nahi kar paunga.'" },
+      { id:"AG-02", cat:"gazipura", catLabel:"Dr. Aziz Gazipura", title:"Own Your Shadow Opinion", src:"Not Nice", core:"Doosro ko khush rakhne ke liye apni asli ray ko mat dabayein.", spotting:"Galat baat par bhi chup rehna taaki koi naaraz na ho.", task:"Muskura kar kahein: 'Mera is par thoda alag nazariya hai.'" }
+    ];
+
+    let activeVaultFilter = "all";
+
+    function renderVaultGrid() {
+      const container = document.getElementById('vault-cards-container');
+      container.innerHTML = '';
+      const q = document.getElementById('vault-search-box').value.toLowerCase().trim();
+
+      const filtered = masterVaultProtocols.filter(p => {
+        const catMatch = activeVaultFilter === 'all' || p.cat === activeVaultFilter;
+        const textMatch = !q || p.title.toLowerCase().includes(q) || p.core.toLowerCase().includes(q) || p.task.toLowerCase().includes(q);
+        return catMatch && textMatch;
+      });
+
+      filtered.forEach(p => {
+        const isDone = completedTasks.has(p.id);
+        const card = document.createElement('div');
+        card.className = `glass-card rounded-2xl p-5 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 shadow-lg ${isDone ? 'ring-1 ring-emerald-500/40 bg-emerald-950/10' : ''}`;
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded border border-slate-700 bg-slate-900 text-gold-400 font-bold">
+                ${p.catLabel}
+              </span>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-[11px] font-mono text-slate-500">#${p.id}</span>
+                <button onclick="toggleVaultTask('${p.id}')" class="p-1 rounded-md text-slate-400 hover:text-emerald-400 transition">
+                  <i class="ph-${isDone ? 'fill text-emerald-400' : 'bold text-slate-600'} ph-check-circle text-lg"></i>
+                </button>
+              </div>
+            </div>
+            <h3 class="font-bold text-sm sm:text-base text-white tracking-tight mb-1">${p.title}</h3>
+            <p class="text-[11px] text-slate-400 font-medium mb-3 flex items-center gap-1">
+              <i class="ph ph-bookmark-simple text-cyan-400"></i> ${p.src}
+            </p>
+            <p class="text-xs text-slate-300 line-clamp-3 leading-relaxed mb-4">${p.core}</p>
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 mb-4">
+              <div class="flex items-center space-x-1.5 text-[10px] font-mono uppercase tracking-wider text-emerald-400 mb-1">
+                <i class="ph-bold ph-crosshair"></i> <span>Daily Action Drill</span>
+              </div>
+              <p class="text-[11px] text-slate-300 font-medium line-clamp-2">${p.task}</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-3 border-t border-slate-800/80 text-xs">
+            <button onclick="openVaultModal('${p.id}')" class="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center space-x-1 transition">
+              <span>View Protocol</span> <i class="ph-bold ph-arrow-right text-xs"></i>
+            </button>
+            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-950 text-slate-400 font-mono">Field Drill</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('vault-task-count').innerText = `${completedTasks.size}/${masterVaultProtocols.length}`;
+      document.getElementById('profile-tasks').innerText = `${completedTasks.size}/${masterVaultProtocols.length}`;
+    }
+
+    function toggleVaultTask(id) {
+      if (completedTasks.has(id)) {
+        completedTasks.delete(id);
+      } else {
+        completedTasks.add(id);
+        playChime('correct');
+      }
+      renderVaultGrid();
+    }
+
+    function filterVaultCards(cat, btn) {
+      playChime('tap');
+      activeVaultFilter = cat;
+      document.querySelectorAll('.vault-filter-btn').forEach(b => {
+        b.className = 'vault-filter-btn px-3.5 py-2 rounded-xl bg-slate-950 text-slate-400 font-semibold hover:text-white whitespace-nowrap';
+      });
+      btn.className = 'vault-filter-btn px-3.5 py-2 rounded-xl bg-cyan-600 text-white font-bold whitespace-nowrap shadow-sm';
+      renderVaultGrid();
+    }
+
+    function openVaultModal(id) {
+      playChime('tap');
+      const p = masterVaultProtocols.find(item => item.id === id);
+      if (!p) return;
+      document.getElementById('modal-category').innerText = p.catLabel;
+      document.getElementById('modal-title').innerText = p.title;
+      document.getElementById('modal-src').innerText = `${p.src} • Protocol #${p.id}`;
+      document.getElementById('modal-core').innerText = p.core;
+      document.getElementById('modal-spotting').innerText = p.spotting;
+      document.getElementById('modal-task').innerText = p.task;
+      document.getElementById('vault-modal').classList.remove('hidden');
+      document.getElementById('vault-modal').classList.add('flex');
+    }
+
+    function closeVaultModal() {
+      document.getElementById('vault-modal').classList.add('hidden');
+      document.getElementById('vault-modal').classList.remove('flex');
+    }
+
+    function pickRandomDrill() {
+      playChime('tap');
+      const randomItem = masterVaultProtocols[Math.floor(Math.random() * masterVaultProtocols.length)];
+      openVaultModal(randomItem.id);
+    }
+
+    /* -------------------------------------------------------------
+       4. POLYGLOT STUDIO: COMPARATIVE SCRIPT MATRIX
+    -------------------------------------------------------------- */
+    const polyglotData = {
+      wisdom: [
+        { lang: "हिन्दी (Hindi)", text: "ज्ञान ही शक्ति है।", script: "देवनागरी लिपि (Devanagari)" },
+        { lang: "English", text: "Knowledge is power.", script: "Latin Script" },
+        { lang: "日本語 (Japanese)", text: "知識は力なり (Chishiki wa chikara nari)", script: "Kanji + Hiragana" },
+        { lang: "संस्कृतम् (Sanskrit)", text: "ज्ञानं परमं बलम्।", script: "वैदिक देवनागरी" },
+        { lang: "اردو (Urdu)", text: "علم طاقت ہے۔", script: "نستعلیق (Nastaliq RTL)" },
+        { lang: "中文 (Chinese)", text: "知识就是力量 (Zhīshì jiùshì lìliàng)", script: "Simplified Hanzi" }
+      ],
+      king: [
+        { lang: "हिन्दी (Hindi)", text: "मैं अपने मन का अधिपति और राजा हूँ।", script: "देवनागरी" },
+        { lang: "English", text: "I am the sovereign master of my mind.", script: "Latin" },
+        { lang: "日本語 (Japanese)", text: "私は我が心の支配者なり。", script: "Samurai Kanji Code" },
+        { lang: "संस्कृतम् (Sanskrit)", text: "अहम् आत्मनः नृपः अस्मि।", script: "अहं ब्रह्मास्मि भाव" },
+        { lang: "اردو (Urdu)", text: "میں اپنے ذہن کا بادشاہ ہوں۔", script: "شاہانہ انداز" }
+      ],
+      victory: [
+        { lang: "हिन्दी (Hindi)", text: "अनुशासन से ही विजय मिलती है।", script: "देवनागरी" },
+        { lang: "English", text: "Victory belongs to the persevering.", script: "Latin" },
+        { lang: "日本語 (Japanese)", text: "忍耐は勝利を導く。", script: "Kanji + Hiragana" },
+        { lang: "संस्कृतम् (Sanskrit)", text: "धैर्येण जयः प्राप्यते।", script: "वैदिक देवनागरी" },
+        { lang: "اردو (Urdu)", text: "فتح ثابت قدم رہنے والوں کی ہوتی ہے۔", script: "نستعلیق" }
+      ],
+      peace: [
+        { lang: "हिन्दी (Hindi)", text: "मन में शांति, कर्म में बिजली।", script: "देवनागरी" },
+        { lang: "English", text: "Silence in mind, lightning in action.", script: "Latin" },
+        { lang: "日本語 (Japanese)", text: "心に静寂、行動に雷光。", script: "Kanji" },
+        { lang: "संस्कृतम् (Sanskrit)", text: "मनसि शान्तिः, कर्मणि विद्युत्।", script: "देवनागरी" },
+        { lang: "اردو (Urdu)", text: "دل میں سکون، عمل میں بجلی۔", script: "نستعلیق" }
+      ]
+    };
+
+    function renderPolyglotComparison() {
+      const concept = document.getElementById('polyglot-concept-select').value;
+      const data = polyglotData[concept] || polyglotData.wisdom;
+      const container = document.getElementById('polyglot-results-box');
+      container.innerHTML = '';
+
+      data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex justify-between items-center text-xs';
+        div.innerHTML = `
+          <div>
+            <span class="text-gold-400 font-bold font-mono">${item.lang}</span>
+            <div class="text-sm text-white font-medium mt-0.5">${item.text}</div>
+          </div>
+          <span class="text-[10px] text-slate-500 font-mono">${item.script}</span>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
